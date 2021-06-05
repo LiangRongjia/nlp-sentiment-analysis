@@ -73,7 +73,7 @@ app.use(controller())
 
 
 /* 监听端口 */
-const port = process.env.PORT || 3001
+const port = process.env.PORT || 80
 app.listen(port)
 
 
