@@ -55,10 +55,10 @@ pyProcess.stdout.on('data', (data) => {
 })
 
 pyProcess.stderr.on('data', (data) => {
-    console.error(`[py stderr] ${data}`);
-});
+    console.error(`[py stderr] ${data}`)
+})
 
-global.pyAnalyze = async (comment) => {
+const pyAnalyze = async (comment) => {
     return await new Promise((resolve, reject) => {
         pyProcess.stdout.once('data', (dataString) => {
             const data = JSON.parse(dataString)
@@ -67,6 +67,27 @@ global.pyAnalyze = async (comment) => {
         pyProcess.stdin.write(comment)
     })
 }
+
+const toSync = (asyncFunc) => {
+    let s = false
+    return (...args) => {
+        return new Promise((resolve, reject) => {
+            const checkS = async () => {
+                if (s === true) {
+                    setTimeout(checkS, 100)
+                    return
+                }
+                s = true
+                const result = await asyncFunc(...args)
+                s = false
+                resolve(result)
+            }
+            checkS()
+        })
+    }
+}
+
+global.pyAnalyze = toSync(pyAnalyze)
 
 /* 执行控制器 */
 app.use(controller())
