@@ -1,3 +1,5 @@
+# 该文件导出模型控制类
+
 import os
 
 import gensim

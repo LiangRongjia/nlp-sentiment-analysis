@@ -49,6 +49,7 @@ const pyProcess = spawn('python', ['index.py'], {
     stdio: 'pipe'
 })
 
+// 监听 py 程序输出
 pyProcess.stdout.setEncoding('utf-8')
 pyProcess.stdout.on('data', (data) => {
     console.log('[py stdout]', data)
@@ -58,6 +59,7 @@ pyProcess.stderr.on('data', (data) => {
     console.error(`[py stderr] ${data}`)
 })
 
+// 调用 python 的接口
 const pyAnalyze = async (comment) => {
     return await new Promise((resolve, reject) => {
         pyProcess.stdout.once('data', (dataString) => {
@@ -68,6 +70,7 @@ const pyAnalyze = async (comment) => {
     })
 }
 
+// 处理一个函数，将可能并发的函数调用改为阻塞同步
 const toSync = (asyncFunc) => {
     let s = false
     return (...args) => {
@@ -87,6 +90,7 @@ const toSync = (asyncFunc) => {
     }
 }
 
+// 为网络请求分析提供阻塞同步的调用 python 的接口
 global.pyAnalyze = toSync(pyAnalyze)
 
 /* 执行控制器 */

@@ -1,3 +1,5 @@
+// 该文件导出 “分析评论接口” 控制器，处理分析的网络请求
+
 const pyAnalyze = global.pyAnalyze
 
 module.exports = {

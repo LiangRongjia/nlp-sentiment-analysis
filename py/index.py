@@ -1,3 +1,5 @@
+# 该文件为后端 py 模型分析脚本的入口文件
+
 import io
 from sklearn.model_selection import train_test_split
 from keras_preprocessing.sequence import pad_sequences
@@ -29,18 +31,15 @@ def load_model(word_model):
 
 def generate_id2wec(word_model):
     gensim_dict = Dictionary()
-    # gensim_dict.doc2bow(model.wv.vocab.keys(), allow_update=True)
     gensim_dict.doc2bow(model.wv.index_to_key, allow_update=True)
-    w2id = {v: k + 1 for k, v in gensim_dict.items()}  # 词语的索引，从1开始编号
-    # print(w2id.keys())
-    # for word in w2id.keys():
-    #     print(model.predict_output_word(word))
-    # print()
-    w2vec = {word: model.wv[word] for word in w2id.keys()}  # 词语的词向量
-    # print(w2vec)
+    # 词语的索引，从1开始编号
+    w2id = {v: k + 1 for k, v in gensim_dict.items()}
+    # 词语的词向量
+    w2vec = {word: model.wv[word] for word in w2id.keys()}
     n_vocabs = len(w2id) + 1
     embedding_weights = np.zeros((n_vocabs, 100))
-    for w, index in w2id.items():  # 从索引为1的词语开始，用词向量填充矩阵
+    # 从索引为1的词语开始，用词向量填充矩阵
+    for w, index in w2id.items():
         embedding_weights[index, :] = w2vec[w]
     return w2id, embedding_weights
 
